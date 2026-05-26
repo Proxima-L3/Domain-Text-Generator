@@ -9,82 +9,14 @@ from collections import defaultdict
 
 # ALGORITHM:
 
-# - retrieve/import (multiple) corpora text for a specific field
-
-
-# markov chain algo:
-
-# turn corpora into string
-# turn string into list split at ' '
-# turn list into a dictionary using defaultdict with a conditional as an argument
-#   the conditional says defaultdict will assign the new key entry a value of 1 unless it already exists in which case it is assigned a value of dictionaryname[item] += 1
-
-
-
-
-
-
-
 
 # STEP 1: find resources for corpora of specialized field AND import it to string form
 
-# - import corpora to string form
-# corpora_string = 'a string of text with multiple reoccurring words like: string string words like with'
-
-
-
-
-# # STEP 2: create word instance map of corpora input
-# def create_word_instance_map(corpora):
-
-#     corpora_list = corpora.split(' ')
-#     # corpora_list
-#     corpora_map = defaultdict(lambda: 1)
-
-#     for item in corpora_list:
-#         if item in corpora_map:
-#             corpora_map[item] += 1
-#         else:
-#             corpora_map[item]
-    
-#     return corpora_map
-
-
-# corpora_dict = create_word_instance_map(corpora_string)
-
-
-
-
-# STEP 3: how frequently a word shows up after a specified word.. to do that we need a hash map with keys representing each possible word and values representing a list of the next most likely words to come next............... so a dictionary with each possible word filled with keyless dictionaries as values with each dictionary having keys representing a word that was found to follow the input word (insert: we need an algorithm that takes the current state aka input word ) and values representing how many times that series of pairs occurred.
-
-
-# we need these data structures:
-#   - list1 = a list converted from a string of the corpus text
-#   - dict1 = a dictionary with key values representing each word of the above list with values that are dictionaries (dict2)
-#       - values that are dictionaries have: 1 key (frequency?) with int value representing how frequently a word appears in corpus text, 1 key (markov_state) with list value of index location numbers where current markov state word appears in list1
-#   - a function that creates dict3
-#   - dict3 = a dictionary with keys representing each word of corpus list and values that are lists of
-#   - 
-#   -? dict? = a dictionary with all possible words and how frequently they appear
-#   - 
-#   - 
-#   - ultimately we need a dictionary with keys representing each possible word and their values are dictionaries of keys representing words that follow parent key with values representing number of times that happens
-#   - 
-#   - 
-#   - 
-#   - 
-#   - 
-#   - 
-#   - 
-#   - so make a dictionary (dict1) of keys of all possible words with empty default dictionary type values
-#   - then a function that loops through corpus list (keep track of current index and list value)
-#       - grab count corresponding to corpus list index
-#       - grab default dict value of dict1's key that corresponds to current corpus list item being iterated through
-#       - grab next index value of corpus list using count + 1 and save word value
-#       - add word as key to default dict with value = 1
-#       - if word as key to default dict already exists += 1 its value
 corpora_string = 'a string of text with multiple reoccurring words like: string string words like with'
 corpora_list = corpora_string.split(' ')
+
+
+# STEP 2: create map with instances of each word of corpora as keys and values of empty defaultdictionaries that will have their own values starting at 1 when created
 
 def create_corpora_map(corpora_list):
     
@@ -96,6 +28,9 @@ def create_corpora_map(corpora_list):
     return corpora_map
 
 corpora_dict = create_corpora_map(corpora_list)
+
+
+# STEP 3: take populated corpora dictionary and then populate each keys inner dictionary with instances of each possible word that follows as keys and the number of times it happens as values
 
 def create_markov_chain_map(corpora_list, corpora_map):
 
@@ -112,6 +47,8 @@ def create_markov_chain_map(corpora_list, corpora_map):
 corpora_markov_chain_map = create_markov_chain_map(corpora_list, corpora_dict)
 
 
+# STEP 4: create output text using populated corpora_chain_map and some user input
+
 def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_text_length):
 
     inner_dict = corpora_chain_map[input_starter_word]
@@ -121,23 +58,27 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_text_len
 
     while len(output_text_list) < output_text_length:
 
-        # come up with next word in output text
+        # come up with next word in output text by finding the word that follows most frequently
         word_instances = 0
         for possible_word in inner_dict:
             if inner_dict[possible_word] > word_instances:
                 next_word = possible_word
                 word_instances = inner_dict[possible_word]
         
+        # focus next code loop to decided upon next word
         inner_dict = corpora_chain_map[next_word]
 
+        # add word to output text list
         output_text_list.append(str(next_word))
     
     output_text = ' '.join(output_text_list)
 
+    return output_text
 
 
 
-# STEP 4: (temp) request user enter a word and a word limit to kickstart the markov chain
+
+# STEP 5: (temp) request user enter a word and a word limit to kickstart the markov chain
 
 user_input_catalyst = input('Enter a word to catalyze text generation: ')
 user_input_text_length = int(input('Enter a the number of words you would like in your generated text: '))
@@ -145,6 +86,6 @@ user_input_text_length = int(input('Enter a the number of words you would like i
 
 
 
-# STEP 5: user input is passed in to markov chain algorithm
+# STEP 6: user input is passed in to markov chain algorithm
 
 print(markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length))
