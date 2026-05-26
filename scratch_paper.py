@@ -16,24 +16,11 @@ corpora_string = 'a string of text with multiple reoccurring words like: string 
 corpora_list = corpora_string.split(' ')
 
 
-# STEP 2: create map with instances of each word of corpora as keys and values of empty defaultdictionaries that will have their own values starting at 1 when created
+# STEP 2: using defaultdict create map that will automatically add instances of each word of corpora list as keys and then populate each keys inner dictionary with instances of each possible word that follows as keys and the number of times it happens as values
 
-def create_corpora_map(corpora_list):
-    
+def create_markov_chain_map(corpora_list):
+
     corpora_map = defaultdict(lambda: defaultdict(lambda: 1))
-
-    for item in corpora_list:
-        corpora_map[item]
-
-    return corpora_map
-
-corpora_dict = create_corpora_map(corpora_list)
-
-
-# STEP 3: take populated corpora dictionary and then populate each keys inner dictionary with instances of each possible word that follows as keys and the number of times it happens as values
-
-def create_markov_chain_map(corpora_list, corpora_map):
-
     index = 0
 
     for item in corpora_list:
@@ -44,10 +31,10 @@ def create_markov_chain_map(corpora_list, corpora_map):
 
     return corpora_map
 
-corpora_markov_chain_map = create_markov_chain_map(corpora_list, corpora_dict)
+corpora_markov_chain_map = create_markov_chain_map(corpora_list)
 
 
-# STEP 4: create output text using populated corpora_chain_map and some user input
+# STEP 3: create output text using populated corpora_chain_map and some user input
 
 def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_text_length):
 
@@ -78,7 +65,7 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_text_len
 
 
 
-# STEP 5: (temp) request user enter a word and a word limit to kickstart the markov chain
+# STEP 4: (temp) request user enter a word and a word limit to kickstart the markov chain
 
 user_input_catalyst = input('Enter a word to catalyze text generation: ')
 user_input_text_length = int(input('Enter a the number of words you would like in your generated text: '))
@@ -86,6 +73,6 @@ user_input_text_length = int(input('Enter a the number of words you would like i
 
 
 
-# STEP 6: user input is passed in to markov chain algorithm
+# STEP 5: user input is passed in to markov chain algorithm
 
 print(markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length))
