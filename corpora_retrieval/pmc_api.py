@@ -1,25 +1,33 @@
+"""Defined a class constructor that can retrieve and save article content from PMC via relevant APIs.
+
+This module holds a class used by a code user to retrieve corpora text from PMC articles using the e-utilities esearch and efetch APIs, can clean up the returned xml response, and then save the corpora text for each article in a dictionary class instance attribute. Takes in two arguments: one to define what search term to use for the article databases (PMC) used & the other to define how many articles to grab text from.
+
+Classes:
+    RetrieveCorporaFromPMCAPI: Contains all code necessary for functionality defined above.
+"""
+
 import requests
 from collections import defaultdict
-import xml.dom.minidom
+# import xml.dom.minidom
 import xml.etree.ElementTree
 from io import StringIO
 
 
-# class constructor to make object that admin user can use to request meta data from search results from a response from a requests.get(url) for PubMedCentral (PMC) apis. returns an object instance that has a corpora dictionary retrieved and parsed 
 class RetrieveCorporaFromPMCAPI():
+    """Contains all code necessary to make calls to relevant apis and save article corpora to corpora_dict attribute.
+    
+    Class constructor to make object that admin user can use to request article ids from search results from a response from a requests.get(url) for PubMedCentral (PMC) apis. Returns an object instance that has a corpora dictionary retrieved and parsed to text only with keys as article ids and values as each article text itself.
+    """
 
     def __init__(self, search_query: str, corpora_count: int):
         self.search_query = search_query
         self.corpora_count = corpora_count
         self.e_utils_esearch_api_url = f'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&term={self.search_query}[Title/Abstract]&retmax=3&retmode=json'
         self.e_utils_efetch_api_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc'
-        self.oa_web_services_api_url = 'https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi'
-        self.bioc_api_url = 'https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json'
+        # self.oa_web_services_api_url = 'https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi'
+        # self.bioc_api_url = 'https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json'
         self.search_query_article_ids = []
         self.corpora_dict = defaultdict(lambda: '')
-        # self.corpus_1 = ''
-        # self.corpus_2 = ''
-        # self.corpus_3 = ''
 
     def get_search_query_article_ids_list(self):
         response = requests.get(str(self.e_utils_esearch_api_url))
@@ -29,9 +37,6 @@ class RetrieveCorporaFromPMCAPI():
             # print(json_data)
             # print('\n\n\n')
             # print(response.text)
-            # last_refreshed = data['Meta Data'][f'{self.corpora_count}. Last Refreshed']
-            # article_ids = data['?'][last_refreshed]['?']
-            # self.search_query_article_ids = article_ids
             self.search_query_article_ids = json_data['esearchresult']['idlist']
             # print(self.search_query_article_ids)
         else:
@@ -39,10 +44,10 @@ class RetrieveCorporaFromPMCAPI():
             print('failed to retrieve article id data')
         
     def get_corpora_text(self):
-        # use e-utilities efetch api to retrieve, parse, and download text files
-        
-        # create string to append to base eutils efetch api endponit url
-        # idlist in param form
+        """Use e-utilities efetch api to retrieve, parse, and save article text to corpora dict.
+
+        This method appends all efetch api specified url params to the url that will be used in a requests.get() to retrieve all articles with matching ids previously defined in get_search_article_ids_list. It then uses the ElementTree xml library to parse through the xml response and grab only relevant article text by separating the response into a temp dictionary with article ids as keys and article element node content (including their child elements) as values. The article nodes are then parsed through to grab only relevant tags that contain the text wanted and loops through to remove unwanted child tags before finally saving each article node text content to corpora_dict.
+        """
 
         # if id list is >= 200 then append all ids from id list to efetch_endpoint_url_params string (must use http post request if over 200)
         efetch_endpoint_url_params = '&id='
@@ -60,32 +65,27 @@ class RetrieveCorporaFromPMCAPI():
         xml_response = requests.get(str(f'{self.e_utils_efetch_api_url}{efetch_endpoint_url_params}'))
 
         # parse xml response with builtin python xml parsing api
+
+        # !!! remove below commented code used to make a sample file that was used to check returned article xml structure and find what dom node elements to grab
         # print(xml.dom.minidom.parseString(xml_response.text).toprettyxml())
         # with open('sample_corporaxml.xml', 'w', encoding='utf-8') as f:
         #     f.write(xml.dom.minidom.parseString(xml_response.text).toprettyxml())
 
-        # for tag_item in xml_response
 
-        # for loop that iterates through element tree to 
-            # find/separate articles at their dom node level
-            # before finding all title, p, and td tags
-            # grab just their text
-            # and append/conjoin it all to a string
-            # add string to corpora_dict as value with keys being each article id
+        # after saving xml response as parsed text use for loop that iterates through xml response root to find and separate all articles at their dom node level before finding all title, p, and td tags. Then saving them to a temp dictionary then loops through to remove unwanted tags and return a cleaned up article list with just the desired text content which is then conjoined into a string then saved to corpora_dict.
+
         xml_response_tree = xml.etree.ElementTree.parse(StringIO(xml_response.text))
         xml_response_root = xml_response_tree.getroot()
-        # article_xml_list = []
-        # article_xml_list = [article_node for article_node in xml_response_root.findall('article')]
 
         temp_dict = defaultdict(lambda: '')
         temp_index = 0
         for article_node in xml_response_root.findall('article'):
-
             temp_dict[self.search_query_article_ids[temp_index]] = article_node
             temp_index += 1
         
         temp_index = 0
         for temp_dict_key in temp_dict:
+            # find all content in title, p, and td tags and conjoin into a list
             temp_list_of_elements = temp_dict[temp_dict_key].findall('.//title') + temp_dict[temp_dict_key].findall('.//p') + temp_dict[temp_dict_key].findall('.//td')
 
             # exclude unwanted text from each title, p, and td tag content
@@ -100,104 +100,23 @@ class RetrieveCorporaFromPMCAPI():
                             parent.text = parent_text + (unwanted.tail or '')
                         if unwanted in element:
                             element.remove(unwanted)
-            # unwanted_element_cleaned_list = temp_list_of_elements
+            
+            # cleaned up list then removes all tags so its just a list of text strings
             text_only_cleaned_list = [' '.join(element.itertext()) for element in temp_list_of_elements]
+            # list of text strings is then joined to single string before being saved to corpora_dict
             article_text_cleaned = ' '.join(text_only_cleaned_list)
             self.corpora_dict[self.search_query_article_ids[temp_index]] = article_text_cleaned
 
             temp_index += 1
         
+        # remove below print statements now that we know it works
         print(self.corpora_dict)
         print(len(self.corpora_dict))
 
-        
 
 
-
-
-
-
-    def get_corpora_text_files_bioc(self):
-        # use BioC api to download text files
-        for article_id in self.search_query_article_ids:
-            
-            response = requests.get(f'{self.bioc_api_url}/PMC{article_id}/unicode')
-
-            if response.status_code == 200:
-
-                try:
-                    article_passages = response.json()[0]['documents'][0]['passages']
-                    joined_passage_text_strs = ''
-
-                    # print('\n\n\n')
-                    # print(article_passages)
-
-
-                    # for section in article_passages:
-                    #     for subitem in section:
-                    #         print('\n\n\n')
-                    #         print(subitem)
-                    #         nested_text = subitem['text']
-                    #         joined_passage_text_strs.append(f' {nested_text}')
-
-                    for sub_passage in article_passages:
-                        print('\n\n\n')
-                        print(sub_passage)
-                        nested_text = sub_passage['text']
-                        joined_passage_text_strs += f' {nested_text}'
-                    
-                    deeply_nested_article_text = joined_passage_text_strs
-                    self.corpora_dict[article_id] = deeply_nested_article_text
-                    # print('\n\n\n')
-                    # print(response.json())
-                    # print('\n\n\n')
-                    # print(deeply_nested_article_text)
-                except requests.exceptions.JSONDecodeError:
-                    print(f'Article PMC{article_id} not available as JSON — skipping')
-                    continue
-            else:
-                print('failed to retrieve article text data')
-
-        for text in self.corpora_dict:
-            print(len(self.corpora_dict))
-            print('\n\n\n')
-
-
+# move below code to relevant preprocess.py file or elsewhere now that we know it works
 pmc_api_object = RetrieveCorporaFromPMCAPI('psychedelics', 3)
 pmc_api_object.get_search_query_article_ids_list()
 pmc_api_object.get_corpora_text()
 
-
-
-
-
-
-
-
-""" 
-This is what response.json() returns:
-
-{
-    'header': {
-        'type': 'esearch',
-        'version': '0.3'
-        },
-    'esearchresult': {
-        'count': '1282',
-        'retmax': '3',
-        'retstart': '0',
-        'idlist': ['13202413', '12169207', '12169204'],
-        'translationset': [],
-        'querytranslation': '"psychedelics"[Title/Abstract]'
-        }
-    }
-
-    
-
-
-
-This is what response.text returns:
-
-{"header":{"type":"esearch","version":"0.3"},"esearchresult":{"count":"1282","retmax":"3","retstart":"0","idlist":["13202413","12169207","12169204"],"translationset":[],"querytranslation":"\"psychedelics\"[Title/Abstract]"}}
-
-"""
