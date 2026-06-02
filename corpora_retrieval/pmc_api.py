@@ -7,10 +7,9 @@ Classes:
 """
 
 import requests
-from collections import defaultdict
-# import xml.dom.minidom
 import xml.etree.ElementTree
 from io import StringIO
+from collections import defaultdict
 
 
 class RetrieveCorporaFromPMCAPI():
@@ -24,8 +23,6 @@ class RetrieveCorporaFromPMCAPI():
         self.corpora_count = corpora_count
         self.e_utils_esearch_api_url = f'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&term={self.search_query}[Title/Abstract]&retmax=3&retmode=json'
         self.e_utils_efetch_api_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc'
-        # self.oa_web_services_api_url = 'https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi'
-        # self.bioc_api_url = 'https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json'
         self.search_query_article_ids = []
         self.corpora_dict = defaultdict(lambda: '')
 
@@ -64,14 +61,7 @@ class RetrieveCorporaFromPMCAPI():
         # retrieve efetch api xml response
         xml_response = requests.get(str(f'{self.e_utils_efetch_api_url}{efetch_endpoint_url_params}'))
 
-        # parse xml response with builtin python xml parsing api
-
-        # !!! remove below commented code used to make a sample file that was used to check returned article xml structure and find what dom node elements to grab
-        # print(xml.dom.minidom.parseString(xml_response.text).toprettyxml())
-        # with open('sample_corporaxml.xml', 'w', encoding='utf-8') as f:
-        #     f.write(xml.dom.minidom.parseString(xml_response.text).toprettyxml())
-
-
+        # parse xml response with builtin python xml parsing api:
         # after saving xml response as parsed text use for loop that iterates through xml response root to find and separate all articles at their dom node level before finding all title, p, and td tags. Then saving them to a temp dictionary then loops through to remove unwanted tags and return a cleaned up article list with just the desired text content which is then conjoined into a string then saved to corpora_dict.
 
         xml_response_tree = xml.etree.ElementTree.parse(StringIO(xml_response.text))
@@ -110,8 +100,8 @@ class RetrieveCorporaFromPMCAPI():
             temp_index += 1
         
         # remove below print statements now that we know it works
-        print(self.corpora_dict)
-        print(len(self.corpora_dict))
+        # print(self.corpora_dict)
+        # print(len(self.corpora_dict))
 
 
 
