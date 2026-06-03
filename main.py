@@ -4,14 +4,17 @@ This module imports the .... class and calls its .run()? method from which
 the program begins.
 """
 
-# insert imports
-from corpora_retrieval.pmc_api import RetrieveCorporaFromPMCAPI
+from src.preprocess import process_api_retrieved_corpora_to_string
 from src.train import create_markov_chain_map
 from src.generate import markov_chain_text_gen
 
 
 def main() -> None:
-    """Create instance of .... and call its run()? method."""
+    """Requests relevant user input output unique text using various modules.
+    Create instance of .... and call its run()? method.
+    
+    For now — the function is the main function that requests user input required for all the various modules used in project. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
+    """
 
     # temp code that: requests user enter a word and a word limit to kickstart the markov chain
     user_input_topic = input('Enter a word or phrase that the generated text should be about: ')
@@ -21,13 +24,8 @@ def main() -> None:
     # number of articles to pull for corpora
     article_count = 5
 
-    # corpora with specified word or phrase is collected with instance of pmc_api.py's main retrieval class constructor and its methods (move this to preprocess later)
-    corpora_retrieval_object = RetrieveCorporaFromPMCAPI(user_input_topic, article_count)
-    corpora_retrieval_object.get_search_query_article_ids_list()
-    corpora_retrieval_object.get_corpora_text()
-
-    # parse through resulting corpora_dict attribute and join all dictionary values into single string (change this so it calls a function or class method to do the below action from preprocess module)
-    corpora_set_string = ' '.join(corpora_retrieval_object.corpora_dict.values())
+    # call corpora processor and pass input topic and article count as arguments
+    corpora_set_string = process_api_retrieved_corpora_to_string(user_input_topic, article_count)
 
     # user input is passed in to corpora chain map creator function
     corpora_markov_chain_map = create_markov_chain_map(corpora_set_string)
