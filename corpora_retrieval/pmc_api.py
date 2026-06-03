@@ -21,7 +21,7 @@ class RetrieveCorporaFromPMCAPI():
     def __init__(self, search_query: str, corpora_count: int):
         self.search_query = search_query
         self.corpora_count = corpora_count
-        self.e_utils_esearch_api_url = f'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&term={self.search_query}[Title/Abstract]&retmax=3&retmode=json'
+        self.e_utils_esearch_api_url = f'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&term={self.search_query}[Title/Abstract]&retmax={self.corpora_count}&retmode=json'
         self.e_utils_efetch_api_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc'
         self.search_query_article_ids = []
         self.corpora_dict = defaultdict(lambda: '')
@@ -98,15 +98,4 @@ class RetrieveCorporaFromPMCAPI():
             self.corpora_dict[self.search_query_article_ids[temp_index]] = article_text_cleaned
 
             temp_index += 1
-        
-        # remove below print statements now that we know it works
-        # print(self.corpora_dict)
-        # print(len(self.corpora_dict))
-
-
-
-# move below code to relevant preprocess.py file or elsewhere now that we know it works
-pmc_api_object = RetrieveCorporaFromPMCAPI('psychedelics', 3)
-pmc_api_object.get_search_query_article_ids_list()
-pmc_api_object.get_corpora_text()
 
