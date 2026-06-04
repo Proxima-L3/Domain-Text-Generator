@@ -27,6 +27,10 @@ class RetrieveCorporaFromPMCAPI():
         self.corpora_dict = defaultdict(lambda: '')
 
     def get_search_query_article_ids_list(self):
+        """Uses e-utilities esearch api to retrieve a list of article ids regarding a specific topic defined by the admin/code user.
+        
+        This method makes a get request to the e-utils esearch api endpoint with relevant url params defined by class constructor argument input. If the request response is received (status code 200) then the response is converted to json format which is then indexed to make a list of admin/code user defined number of articles into a list class instance attribute
+        """
         response = requests.get(str(self.e_utils_esearch_api_url))
 
         if response.status_code == 200:

@@ -6,15 +6,14 @@ Functions:
     create_markov_chain_map: Creates the actual markov chain map trained on cleaned up corpora text from preprocess.py.
 """
 
-# import numpy as np
 from collections import defaultdict
 
 
-# STEP 2: using defaultdict create map that will automatically add instances of each word of corpora list as keys and then populate each keys inner dictionary with instances of each possible word that follows as keys and the number of times it happens as values
-
-# the corpora_text argument will be imported from preprocess
-
 def create_markov_chain_map(corpora_text: str):
+    """Creates and returns a markov chain map.
+    
+    Takes in corpora text string as an input which is split at spaces (for now) into a list. That list is then iterated through, adding every possible word as a key to a nested dictionary. The values for the word keys are nested dictionaries. The nested dictionaries hold next possible words as keys along with integer values indicating how frequently that possible word follows the main parent key word.
+    """
 
     corpora_list = corpora_text.split(' ')
 
@@ -28,14 +27,4 @@ def create_markov_chain_map(corpora_text: str):
             index += 1
 
     return corpora_map
-
-# corpora_markov_chain_map = create_markov_chain_map(corpora_list)
-
-
-
-
-
-
-
-
 

@@ -1,12 +1,15 @@
 """Cleans up raw corpora text.
 
 Uses ..[insert method/library/tools].. to clean up corpora of all bloated/unwanted pieces of text from corpora such as: escape characters like \n, urls, citations, author names, etc. And maybe punctuation and converting non ascii characters and symbols not typically able to be typed on the standard keyboard.
+
+Functions:
+    process_api_retrieved_corpora_to_string: Processes (for now) admin/code user defined input topic and article count then creates an instance of the PMC corpora retrieval api class constructor. That object instance then uses its methods for retrieving a list of article ids and then saves the corpora text matched with their ids in corpora_dict of the object instance. Main purpose of function (for now) is to then retrieve only the string values or corpora_dict and join them into a single string which is then returned.
 """
 
 from corpora_retrieval.pmc_api import RetrieveCorporaFromPMCAPI
 
 
-# the turning of the resulting corpora retrieval object instance's corpora_dict will be here in preprocess (it will make a call to pmc_api to make an object instance then join all the values of corpora_dict attribute into a single string.. the cleaning up of the text functions/classes will come later for now)
+# the cleaning up of the text functions/classes will come later for now)
 def process_api_retrieved_corpora_to_string(user_input_topic: str, article_count: int):
     """Processes retrieved corpora from a corpora api class instance's corpora_dict.
 

@@ -9,11 +9,11 @@ Functions:
 import random
 
 
-# STEP 3: create output text using populated corpora_chain_map and some user input
-
-# this function will be moved to generate.py and that module will import the create_markov_chain_map function to create a corpora_chain_map variable for first function parameter. input starter word and output text length will be values using with below input console requests for now
-
-def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_text_length):
+def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_word_count):
+    """Uses the markov chain mathematical/statistical model to return unique output text.
+    
+    This function takes in a corpora chain map of keys (possible words in corpora) and values (nested dictionaries with keys representing next possible words and their values representing how frequently a key word follows the parent key word), a starter word to catalyze the markov chain process, and a word count integer all as arguments. The function's algorithm starts by assigning some important variables to empty strings and a list. It checks if the catalyst word is in the corpora map and if not the catalyst word starts with 'The'. It then appends the word to the output text string. The while loop checks if a dictionary of possible next words exists for the current word (markov state), then determines which word should come next in output text based on a weighted randomizer, and then that word is appended to the ongoing output_text_list. Finally, after the while loop has generated a list matching the number specified by the output word count argument, it joins the list of words into a string, and that string of all the corpora is returned.
+    """
 
     next_word = ''
     output_text_list = []
@@ -28,7 +28,7 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_word, output_text_len
 
     print(f'starter word found: {input_starter_word in corpora_chain_map}')
     print(f"'The' found: {'The' in corpora_chain_map}")
-    while len(output_text_list) < output_text_length:
+    while len(output_text_list) < output_word_count:
 
         # if next word inner dictionary is not empty, come up with next word in output text via randomizer weighted by which options follow most frequently
         if inner_dict:

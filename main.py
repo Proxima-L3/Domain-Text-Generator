@@ -1,7 +1,9 @@
 """Run Domain Specific Text Generator from program entry point.
 
-This module imports the .... class and calls its .run()? method from which
-the program begins.
+This module holds the main function which acts as the program's entry point. It imports the relevant modules needed for the main function.
+
+Functions:
+    main: The program's entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
 """
 
 from src.preprocess import process_api_retrieved_corpora_to_string
@@ -31,9 +33,10 @@ def main() -> None:
     corpora_markov_chain_map = create_markov_chain_map(corpora_set_string)
 
     # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
-    generated_text_output = markov_chain_text_gen(corpora_chain_map=corpora_markov_chain_map, input_starter_word=user_input_catalyst, output_text_length=user_input_text_length)
+    generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
 
-    print(generated_text_output)
+    return print(generated_text_output)
+
 
 
 
