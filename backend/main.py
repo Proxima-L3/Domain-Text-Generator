@@ -20,11 +20,11 @@ def main() -> None:
 
     # temp code that: requests user enter a word and a word limit to kickstart the markov chain
     user_input_topic = input('Enter a word or phrase that the generated text should be about: ')
-    user_input_catalyst = input('Enter a word to catalyze text generation: ')
+    user_input_catalyst = input('Enter two words to catalyze text generation: ')
     user_input_text_length = int(input('Enter the number of words you would like in your generated text: '))
 
     # number of articles to pull for corpora
-    article_count = 5
+    article_count = 10
 
     # call corpora processor and pass input topic and article count as arguments
     corpora_set_string = process_api_retrieved_corpora_to_string(user_input_topic, article_count)
@@ -39,8 +39,8 @@ def main() -> None:
     generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
 
     # temp save to a text file line below
-    # with open('sample_gen_text_output.txt', mode='w', encoding='utf-8') as f:
-        # f.write(generated_text_output)
+    with open('sample2_gen_text_output.txt', mode='w', encoding='utf-8') as f:
+        f.write(generated_text_output)
         
     return print(generated_text_output)
 
