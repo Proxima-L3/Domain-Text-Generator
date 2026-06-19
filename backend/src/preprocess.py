@@ -6,6 +6,8 @@ Functions:
     process_api_retrieved_corpora_to_string: Processes (for now) admin/code user defined input topic and article count then creates an instance of the PMC corpora retrieval api class constructor. That object instance then uses its methods for retrieving a list of article ids and then saves the corpora text matched with their ids in corpora_dict of the object instance. Main purpose of function (for now) is to then retrieve only the string values or corpora_dict and join them into a single string which is then returned.
 """
 
+import re
+from unidecode import unidecode
 from corpora_retrieval.pmc_api import RetrieveCorporaFromPMCAPI
 
 
@@ -25,3 +27,30 @@ def process_api_retrieved_corpora_to_string(user_input_topic: str, article_count
     corpora_set_string = ' '.join(corpora_retrieval_object.corpora_dict.values())
 
     return corpora_set_string
+
+def clean_up_corpora_string(dirty_corpora_string: str):
+    """Cleans an input corpora string of undesired artifacts left from processing source texts
+
+    The purpose of this function is to use regex statements and parsing libraries to return a string that has been cleaned of all urls, citation markers, author names/references, escape characters, to replace non-ascii characters with characters that can be typed on a standard keyboard, and to remove extra whitespace.
+    """
+
+    cleaner_corpora = dirty_corpora_string
+
+    # regex that removes urls
+    cleaner_corpora = re.sub(r'http\S+|www\S+https\S', '', cleaner_corpora)
+    # regex that removes citation markers
+    cleaner_corpora = re.sub(r'\[\d+\]', '', cleaner_corpora)
+    # regex that removes author name patters
+    cleaner_corpora = re.sub(r'Author:\s*\w+\s+\w+', '', cleaner_corpora)
+    # regex that removes escape characters
+    cleaner_corpora = re.sub(r'\\[ntr]', '', cleaner_corpora)
+    # function that replaces non-ascii char that cant be typed on standard keyboard
+    cleaner_corpora = unidecode(cleaner_corpora)
+    # regex that converts numbers that arent part of meaningful text ?
+    #
+    # regex that removes extra whitespace
+    cleaner_corpora = re.sub(r'\s+', ' ', cleaner_corpora)
+
+    cleaned_corpora_string = cleaner_corpora
+
+    return cleaned_corpora_string

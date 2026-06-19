@@ -6,7 +6,7 @@ Functions:
     main: The program's entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
 """
 
-from src.preprocess import process_api_retrieved_corpora_to_string
+from src.preprocess import process_api_retrieved_corpora_to_string, clean_up_corpora_string
 from src.train import create_markov_chain_map
 from src.generate import markov_chain_text_gen
 
@@ -29,12 +29,19 @@ def main() -> None:
     # call corpora processor and pass input topic and article count as arguments
     corpora_set_string = process_api_retrieved_corpora_to_string(user_input_topic, article_count)
 
+    # cleans up corpora string
+    clean_corpora_string = clean_up_corpora_string(corpora_set_string)
+
     # user input is passed in to corpora chain map creator function
-    corpora_markov_chain_map = create_markov_chain_map(corpora_set_string)
+    corpora_markov_chain_map = create_markov_chain_map(clean_corpora_string)
 
     # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
     generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
 
+    # temp save to a text file line below
+    # with open('sample_gen_text_output.txt', mode='w', encoding='utf-8') as f:
+        # f.write(generated_text_output)
+        
     return print(generated_text_output)
 
 
