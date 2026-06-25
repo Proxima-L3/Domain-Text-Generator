@@ -29,7 +29,7 @@ def main() -> None:
     # call corpora processor and pass input topic and article count as arguments
     corpora_set_string = process_api_retrieved_corpora_to_string(user_input_topic, article_count)
 
-    # cleans up corpora string
+    # cleans up corpora string, adds punctuation tokenization, and adds sentence start tag indicators to help markov chain determine when sentences should begin
     clean_corpora_string = clean_up_corpora_string(corpora_set_string)
 
     # user input is passed in to corpora chain map creator function
@@ -39,8 +39,8 @@ def main() -> None:
     generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
 
     # temp save to a text file line below
-    with open('sample2_gen_text_output.txt', mode='w', encoding='utf-8') as f:
-        f.write(generated_text_output)
+    # with open('sample3_gen_text_output.txt', mode='w', encoding='utf-8') as f:
+        # f.write(generated_text_output)
         
     return print(generated_text_output)
 

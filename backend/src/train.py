@@ -22,10 +22,9 @@ def create_markov_chain_map(corpora_text: str):
 
     for item in corpora_list:
         if len(corpora_list) - 2 != index:
-            first_word = item
-            second_word = corpora_list[index+1]
-            third_word = corpora_list[index+2]
-            corpora_map[(first_word, second_word)][third_word] += 1
+            state = (item, corpora_list[index+1])
+            next_word = corpora_list[index+2]
+            corpora_map[state][next_word] += 1
             index += 1
 
     return corpora_map

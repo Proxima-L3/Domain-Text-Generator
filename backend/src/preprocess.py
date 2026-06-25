@@ -28,6 +28,16 @@ def process_api_retrieved_corpora_to_string(user_input_topic: str, article_count
 
     return corpora_set_string
 
+def add_sentence_start_tags(cleaned_corpora_string: str):
+    """Adds <START> tags at beginning of sentences to indicate when a sentence should begin
+    
+    """
+
+    # put start before each sentence via end of sentence punctuation indicators
+    output_text = cleaned_corpora_string.replace(' . ', ' . <START> ').replace(' ? ', ' ? <START> ').replace(' ! ', ' ! <START> ')
+
+    return output_text
+
 def clean_up_corpora_string(dirty_corpora_string: str):
     """Cleans an input corpora string of undesired artifacts left from processing source texts
 
@@ -48,6 +58,12 @@ def clean_up_corpora_string(dirty_corpora_string: str):
     cleaner_corpora = unidecode(cleaner_corpora)
     # regex that converts numbers that arent part of meaningful text ?
     #
+    # regex that makes . , ! ? their own tokens/states in the markov chain (by adding space around the end of sentence/clause punctuation marks) ..(special regex check cases for , & . between numbers)
+    cleaner_corpora = re.sub(r'([!?])', r' \1 ', cleaner_corpora)
+    cleaner_corpora = re.sub(r'(?<!\d)\.(?!\d)', r' . ', cleaner_corpora)
+    cleaner_corpora = re.sub(r'(?<!\d)\,(?!\d)', r' , ', cleaner_corpora)
+    # function that adds start tokens indicating when a new sentence should begin
+    cleaner_corpora = add_sentence_start_tags(cleaner_corpora)
     # regex that removes extra whitespace
     cleaner_corpora = re.sub(r'\s+', ' ', cleaner_corpora)
 

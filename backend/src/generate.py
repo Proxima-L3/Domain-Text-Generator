@@ -19,17 +19,18 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_words, output_word_co
     next_word = ''
     output_text_list = []
     output_text = ''
+    punc_counter = 0
 
     if input_starter_tuple in corpora_chain_map:
         inner_dict = corpora_chain_map[input_starter_tuple]
         output_text_list.extend(input_starter_words.split())
     else:
-        inner_dict = corpora_chain_map[('The', 'study')]
-        output_text_list.extend(['The', 'study'])
+        inner_dict = corpora_chain_map[('<START>', 'The')]
+        output_text_list.extend(['<START>', 'The'])
 
     print(f'starter words found: {input_starter_tuple in corpora_chain_map}')
-    print(f"'The study' found: {('The', 'study') in corpora_chain_map}")
-    while len(output_text_list) < output_word_count:
+    print(f"'<START> The' found: {('<START>', 'The') in corpora_chain_map}")
+    while len(output_text_list) - punc_counter < output_word_count:
 
         # if next word inner dictionary is not empty, come up with next word in output text via randomizer weighted by which options follow most frequently
         if inner_dict:
@@ -40,10 +41,19 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_words, output_word_co
         # add word to output text list
         output_text_list.append(str(next_word))
 
-        # focus next code loop to previous word in first tuple and decided upon next word
+        # focus next code loop to second word in previous tuple and decided upon next word as next loop's tuple markov state
         inner_dict = corpora_chain_map[(output_text_list[-2], next_word)]
+
+        # increment punc_counter if next_word is in punctuation list (do this to ensure punctuation marks dont count towards output_word_count)
+        if next_word in ['!', '?', ',', '.', '<START>']:
+            punc_counter += 1
     
     output_text = ' '.join(output_text_list)
+
+    # remove start tags that indicate the start of a sentence
+    output_text = output_text.replace(' <START> ', ' ').replace('<START> ', '')
+    # remove space in front of punctuation marks that indicate end of sentence or clause from output text
+    output_text = output_text.replace(' .', '.').replace(' ,', ',').replace(' ?', '?').replace(' !', '!')
 
     return output_text
 
