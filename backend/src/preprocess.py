@@ -31,6 +31,7 @@ def process_api_retrieved_corpora_to_string(user_input_topic: str, article_count
 def add_sentence_start_tags(cleaned_corpora_string: str):
     """Adds <START> tags at beginning of sentences to indicate when a sentence should begin
     
+    The purpose of this function is to replace certain end of sentence punctuation marks that also indicate a new sentence will begin with a <START> tag that will just be in the markov chain model itself as its own token but will later be cleaned before the actual generated text is output.
     """
 
     # put start before each sentence via end of sentence punctuation indicators
