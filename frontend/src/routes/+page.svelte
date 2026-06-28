@@ -2,7 +2,7 @@
 <script lang="ts">
     // insert any necessary ts here
 
-    import { enhance } from '$app/forms';
+    // import { enhance } from '$app/forms';
 
     import { Icon } from 'svelte-icons-pack';
     import { BsArrowRight } from 'svelte-icons-pack/bs';
@@ -17,7 +17,7 @@
     let userInputTextLength: number | undefined = $state(undefined);
 
     let formSubmittedBool: boolean = $state(false);
-    let generatedOutputText: string = $state('temp placeholder text for now');
+    let generatedOutputText: string = $state('');
 
     // useful helper states to keep the html clean
     let isInputCatalystDisabled: boolean = $derived(userInputTopic.trim() === '');
@@ -27,13 +27,32 @@
 
     
     // not sure the use of below var declaration yet
-    let { form } = $props();
+    // let { form } = $props();
 
 
     // functions
 
     function copyToClipboard () : void {
         navigator.clipboard.writeText(generatedOutputText);
+    }
+
+    async function handleFormSubmit (event: SubmitEvent) : Promise<void> {
+        event.preventDefault();
+        formSubmittedBool = true;
+
+        const response = await fetch('http://localhost:5000/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                topic: userInputTopic,
+                catalyst: userInputCatalyst,
+                textLength: userInputTextLength
+            })
+        });
+
+        const data = await response.json();
+        generatedOutputText = data.generated_text;
+        formSubmittedBool = false;
     }
 
 </script>
@@ -50,7 +69,7 @@
 <br>
 
 <div class="parentPageContentDiv">
-    <form action="" method="POST" use:enhance>
+    <form action="" onsubmit={handleFormSubmit}>
         <label for="userInputTopicInputTag">Enter a word or phrase that the generated text should be about: </label>
         <input id="userInputTopicInputTag" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" required />
     
@@ -71,8 +90,8 @@
         <div class="spinning">
             <Icon src={FaSolidSpinner} />
         </div>
-    {:else if form}
-        <p class="" class:error={!form.success}>Text Generation Complete: Output Below</p>
+    {:else if generatedOutputText !== ''}
+        <p class="">Text Generation Complete: Output Below</p>
     {:else}
         <p class="">(Finish submitting form)</p>
     {/if}
@@ -81,7 +100,7 @@
         <button class="absolute top-2 right-2" onclick={copyToClipboard}>
             <Icon src={LuClipboardCopy} />
         </button>
-        {#if form}
+        {#if generatedOutputText !== ''}
             <p>{generatedOutputText}</p>
         {:else}
             <p>Text will be output here...</p>
