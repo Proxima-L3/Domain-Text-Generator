@@ -8,6 +8,7 @@
     import { BsArrowRight } from 'svelte-icons-pack/bs';
     import { FaSolidArrowRightLong } from "svelte-icons-pack/fa";
     import { FaSolidSpinner } from "svelte-icons-pack/fa";
+    import { LuClipboardCopy } from "svelte-icons-pack/lu";
 
     // let vars in ts: user_input_topic/specialization field, user_input_catalyst, & user_input_text_length ...to be used as svelte state vars for conditional html elements
 
@@ -16,6 +17,7 @@
     let userInputTextLength: number | undefined = $state(undefined);
 
     let formSubmittedBool: boolean = $state(false);
+    let generatedOutputText: string = $state('temp placeholder text for now');
 
     // useful helper states to keep the html clean
     let isInputCatalystDisabled: boolean = $derived(userInputTopic.trim() === '');
@@ -26,6 +28,13 @@
     
     // not sure the use of below var declaration yet
     let { form } = $props();
+
+
+    // functions
+
+    function copyToClipboard () : void {
+        navigator.clipboard.writeText(generatedOutputText);
+    }
 
 </script>
 
@@ -67,6 +76,17 @@
     {:else}
         <p class="">(Finish submitting form)</p>
     {/if}
+
+    <div class="bg-gray-800 text-white p-4 rounded-lg max-h-64 overflow-y-auto relative">
+        <button class="absolute top-2 right-2" onclick={copyToClipboard}>
+            <Icon src={LuClipboardCopy} />
+        </button>
+        {#if form}
+            <p>{generatedOutputText}</p>
+        {:else}
+            <p>Text will be output here...</p>
+        {/if}
+    </div>
 
 </div>
 
