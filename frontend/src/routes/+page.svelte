@@ -2,6 +2,8 @@
 <script lang="ts">
     // insert any necessary ts here
 
+    import { enhance } from '$app/forms';
+
     import { Icon } from 'svelte-icons-pack';
     import { BsArrowRight } from 'svelte-icons-pack/bs';
     import { FaSolidArrowRightLong } from "svelte-icons-pack/fa";
@@ -21,6 +23,10 @@
 
     let textGenerationIsLoading: boolean = $derived(formSubmittedBool);
 
+    
+    // not sure the use of below var declaration yet
+    let { form } = $props();
+
 </script>
 
 
@@ -29,21 +35,21 @@
 <!-- the body of the svelte page goes here. no need for a single parent/wrapper element. -->
 
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<!-- <h1>Welcome to SvelteKit</h1> -->
+<!-- <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p> -->
 
 <br>
 
 <div class="parentPageContentDiv">
-    <form action="">
-        <label for="userInputTopic">Enter a word or phrase that the generated text should be about: </label>
-        <input id="userInputTopic" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" />
+    <form action="" method="POST" use:enhance>
+        <label for="userInputTopicInputTag">Enter a word or phrase that the generated text should be about: </label>
+        <input id="userInputTopicInputTag" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" required />
     
-        <label for="userInputCatalyst">Enter two words to catalyze text generation: </label>
-        <input id="userInputCatalyst" name="userInputCatalyst" type="text" bind:value={userInputCatalyst} placeholder="(e.g. Cryogenic preservation)" disabled={isInputCatalystDisabled} />
+        <label for="userInputCatalystInputTag">Enter two words to catalyze text generation: </label>
+        <input id="userInputCatalystInputTag" name="userInputCatalyst" type="text" bind:value={userInputCatalyst} placeholder="(e.g. Cryogenic preservation)" disabled={isInputCatalystDisabled} required />
     
-        <label for="userInputTextLength">Enter the number of words you would like in your generated text: </label>
-        <input id="userInputTextLength" name="userInputTextLength" type="number" bind:value={userInputTextLength} placeholder="(i.e. more than 1)" disabled={isInputTextLengthDisabled} />
+        <label for="userInputTextLengthInputTag">Enter the number of words you would like in your generated text: </label>
+        <input id="userInputTextLengthInputTag" name="userInputTextLength" type="number" bind:value={userInputTextLength} placeholder="(i.e. more than 1)" disabled={isInputTextLengthDisabled} required />
         
         <!-- <label for="generateTextOutputBtn">Generate Output Text</label> -->
         <button class="btn btn-indigo" id="generateTextOutputBtn" type="submit" value="Submit Form">Generate Output Text</button>
@@ -56,8 +62,10 @@
         <div class="spinning">
             <Icon src={FaSolidSpinner} />
         </div>
+    {:else if form}
+        <p class="" class:error={!form.success}>Text Generation Complete: Output Below</p>
     {:else}
-         <p class="">Text Generation Complete: Output Below</p>
+        <p class="">(Finish submitting form)</p>
     {/if}
 
 </div>
