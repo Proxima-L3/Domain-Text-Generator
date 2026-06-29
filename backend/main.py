@@ -3,7 +3,8 @@
 This module holds the main function which acts as the program's entry point. It imports the relevant modules needed for the main function.
 
 Functions:
-    main: The program's entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
+    main: The program's primary entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then returns the desired output.
+    main_cli: The program's secondary cli based entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
 """
 
 from src.preprocess import process_api_retrieved_corpora_to_string, clean_up_corpora_string
@@ -11,17 +12,11 @@ from src.train import create_markov_chain_map
 from src.generate import markov_chain_text_gen
 
 
-def main() -> None:
-    """Requests relevant user input output unique text using various modules.
-    Create instance of .... and call its run()? method.
+def main(user_input_topic, user_input_catalyst, user_input_text_length) -> str:
+    """Accepts frontend user input to output unique text using various modules.
     
-    For now — the function is the main function that requests user input required for all the various modules used in project. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
+    For now — the function is the main function that accepts user input required for all the various modules used in project as parameters. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
     """
-
-    # temp code that: requests user enter a word and a word limit to kickstart the markov chain
-    user_input_topic = input('Enter a word or phrase that the generated text should be about: ')
-    user_input_catalyst = input('Enter two words to catalyze text generation: ')
-    user_input_text_length = int(input('Enter the number of words you would like in your generated text: '))
 
     # number of articles to pull for corpora
     article_count = 10
@@ -38,14 +33,29 @@ def main() -> None:
     # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
     generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
 
+    return generated_text_output
+
+def main_cli() -> None:
+    """Requests relevant user input to output unique text using various modules.
+    Create instance of .... and call its run()? method.
+    
+    For now — the function is the main function that requests user input required for all the various modules used in project. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
+    """
+
+    # temp code that: requests user enter a word and a word limit to kickstart the markov chain
+    user_input_topic = input('Enter a word or phrase that the generated text should be about: ')
+    user_input_catalyst = input('Enter two words to catalyze text generation: ')
+    user_input_text_length = int(input('Enter the number of words you would like in your generated text: '))
+
     # temp save to a text file line below
     # with open('sample3_gen_text_output.txt', mode='w', encoding='utf-8') as f:
         # f.write(generated_text_output)
         
-    return print(generated_text_output)
+    # call main function to follow DRY
+    return print(main(user_input_topic, user_input_catalyst, user_input_text_length))
 
 
 
 
 if __name__ == '__main__':
-    main()
+    main_cli()
