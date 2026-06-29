@@ -16,5 +16,19 @@ def index():
 
     return jsonify({'generated_text': generated_text_output})
 
+@app.route('/api/generate', methods=['POST'])
+def api_generate():
+    specialization = request.json['specialization']
+    input_text_length = int(request.json['word_count'])
+
+    specialization_topic_catalyst_map = {'medical - experimental autogen text': ['cryonics', 'Cryogenic preservation']}
+
+    input_topic, input_catalyst = specialization_topic_catalyst_map[specialization]
+
+    generated_text_output = main(input_topic, input_catalyst, input_text_length)
+
+    return jsonify({'generated_text': generated_text_output})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
