@@ -4,7 +4,7 @@ from main import main
 
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5174'])
+CORS(app, origins=['http://localhost:5174', 'https://proxima-l3.github.io'])
 
 @app.route('/generate', methods=['POST'])
 def index():
