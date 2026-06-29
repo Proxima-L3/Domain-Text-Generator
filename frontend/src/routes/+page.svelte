@@ -5,7 +5,6 @@
     // import { enhance } from '$app/forms';
 
     import { Icon } from 'svelte-icons-pack';
-    import { BsArrowRight } from 'svelte-icons-pack/bs';
     import { FaSolidArrowRightLong } from "svelte-icons-pack/fa";
     import { FaSolidSpinner } from "svelte-icons-pack/fa";
     import { LuClipboardCopy } from "svelte-icons-pack/lu";
@@ -63,47 +62,61 @@
 <!-- the body of the svelte page goes here. no need for a single parent/wrapper element. -->
 
 
-<!-- <h1>Welcome to SvelteKit</h1> -->
-<!-- <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p> -->
-
 <br>
 
-<div class="parentPageContentDiv">
-    <form action="" onsubmit={handleFormSubmit}>
-        <label for="userInputTopicInputTag">Enter a word or phrase that the generated text should be about: </label>
-        <input id="userInputTopicInputTag" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" required />
-    
-        <label for="userInputCatalystInputTag">Enter two words to catalyze text generation: </label>
-        <input id="userInputCatalystInputTag" name="userInputCatalyst" type="text" bind:value={userInputCatalyst} placeholder="(e.g. Cryogenic preservation)" disabled={isInputCatalystDisabled} required />
-    
-        <label for="userInputTextLengthInputTag">Enter the number of words you would like in your generated text: </label>
-        <input id="userInputTextLengthInputTag" name="userInputTextLength" type="number" bind:value={userInputTextLength} placeholder="(i.e. more than 1)" disabled={isInputTextLengthDisabled} required />
+<div class="flex flex-col justify-center items-center mt-6">
+    <h1 class="text-3xl font-bold text-indigo-300 mb-12">Domain Text Generator</h1>
+
+    <div class="flex items-center gap-x-10 mb-10">
+        <form class="flex flex-col items-end gap-y-6" id="userInputForm" action="" onsubmit={handleFormSubmit}>
+
+            <div class="flex items-center gap-x-2">
+                <label class="text-neutral-300" for="userInputTopicInputTag">Enter a word or phrase that the generated text should be about: </label>
+                <input class="bg-neutral-600 border-2 border-cyan-500 rounded px-3 py-2 text-white placeholder-neutral-300 disabled:opacity-50" id="userInputTopicInputTag" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" required />
+            </div>
+
+            <div class="flex items-center gap-x-2">
+                <label class="text-neutral-300" for="userInputCatalystInputTag">Enter two words to catalyze text generation: </label>
+                <input class="bg-neutral-600 border-2 border-cyan-500 rounded px-3 py-2 text-white placeholder-neutral-300 disabled:opacity-50" id="userInputCatalystInputTag" name="userInputCatalyst" type="text" bind:value={userInputCatalyst} placeholder="(e.g. Cryogenic preservation)" disabled={isInputCatalystDisabled} required />
+            </div>
+            
+            <div class="flex items-center gap-x-2">
+                <label class="text-neutral-300" for="userInputTextLengthInputTag">Enter the number of words you would like in your generated text: </label>
+                <input class="bg-neutral-600 border-2 border-cyan-500 rounded px-3 py-2 text-white placeholder-neutral-300 disabled:opacity-50" id="userInputTextLengthInputTag" name="userInputTextLength" type="number" bind:value={userInputTextLength} placeholder="(i.e. more than 1)" disabled={isInputTextLengthDisabled} required />
+            </div>
+            
+        </form>
         
-        <!-- <label for="generateTextOutputBtn">Generate Output Text</label> -->
-        <button class="btn btn-indigo" id="generateTextOutputBtn" type="submit" value="Submit Form">Generate Output Text</button>
-    </form>
-
-    <!-- <Icon src={BsArrowRight} /> -->
-    <Icon src={FaSolidArrowRightLong} />
-
-    {#if textGenerationIsLoading}
-        <div class="spinning">
-            <Icon src={FaSolidSpinner} />
+        <div class="flex flex-col items-center gap-y-4">
+            <!-- <label for="generateTextOutputBtn">Generate Output Text</label> -->
+            <button class="btn btn-indigo cursor-pointer" id="generateTextOutputBtn" form="userInputForm" type="submit" value="Submit Form">Generate Output Text</button>
+            
+            <!-- <Icon src={BsArrowRight} /> -->
+            <Icon src={FaSolidArrowRightLong} size="48" />
         </div>
-    {:else if generatedOutputText !== ''}
-        <p class="">Text Generation Complete: Output Below</p>
-    {:else}
-        <p class="">(Finish submitting form)</p>
-    {/if}
 
-    <div class="bg-gray-800 text-white p-4 rounded-lg max-h-64 overflow-y-auto relative">
-        <button class="absolute top-2 right-2" onclick={copyToClipboard}>
+        <div class="flex flex-col justify-center items-center">
+            {#if textGenerationIsLoading}
+                <div class="spinning">
+                    <Icon src={FaSolidSpinner} />
+                </div>
+            {:else if generatedOutputText !== ''}
+                <p class="font-bold text-xl text-cyan-400">Text Generation Complete: Output Below</p>
+            {:else}
+                <p class="font-bold text-lg text-cyan-400">(Finish submitting form)</p>
+            {/if}
+        </div>
+    </div>
+    
+
+    <div class="bg-neutral-700 border-4 border-indigo-700 text-white p-4 rounded-lg  w-3/4 h-80 max-h-80 overflow-y-auto relative">
+        <button class="absolute top-2 right-2 cursor-pointer" onclick={copyToClipboard}>
             <Icon src={LuClipboardCopy} />
         </button>
         {#if generatedOutputText !== ''}
             <p>{generatedOutputText}</p>
         {:else}
-            <p>Text will be output here...</p>
+            <p class="text-neutral-400 italic">Text will be output here...</p>
         {/if}
     </div>
 
