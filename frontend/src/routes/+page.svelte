@@ -1,7 +1,5 @@
 <!-- <svelte:options runes={true} /> -->
 <script lang="ts">
-    // insert any necessary ts here
-
     // import { enhance } from '$app/forms';
 
     import { Icon } from 'svelte-icons-pack';
@@ -9,8 +7,8 @@
     import { FaSolidSpinner } from "svelte-icons-pack/fa";
     import { LuClipboardCopy } from "svelte-icons-pack/lu";
 
-    // let vars in ts: user_input_topic/specialization field, user_input_catalyst, & user_input_text_length ...to be used as svelte state vars for conditional html elements
 
+    // let vars in ts: user_input_topic/specialization field, user_input_catalyst, & user_input_text_length ...to be used as svelte state vars for conditional html elements
     let userInputTopic: string = $state('');
     let userInputCatalyst: string = $state('');
     let userInputTextLength: number | undefined = $state(undefined);
@@ -23,10 +21,6 @@
     let isInputTextLengthDisabled: boolean = $derived(isInputCatalystDisabled || userInputCatalyst.trim() === '');
 
     let textGenerationIsLoading: boolean = $derived(formSubmittedBool);
-
-    
-    // not sure the use of below var declaration yet
-    // let { form } = $props();
 
 
     // functions
@@ -59,11 +53,6 @@
 
 
 
-<!-- the body of the svelte page goes here. no need for a single parent/wrapper element. -->
-
-
-<br>
-
 <div class="flex flex-col justify-center items-center mt-6">
     <h1 class="text-3xl font-bold text-indigo-300 mb-12">Domain Text Generator</h1>
 
@@ -88,10 +77,8 @@
         </form>
         
         <div class="flex flex-col items-center gap-y-4">
-            <!-- <label for="generateTextOutputBtn">Generate Output Text</label> -->
-            <button class="btn btn-indigo cursor-pointer" id="generateTextOutputBtn" form="userInputForm" type="submit" value="Submit Form">Generate Output Text</button>
+            <button class="btn btn-indigo cursor-pointer" form="userInputForm" type="submit" value="Submit Form">Generate Output Text</button>
             
-            <!-- <Icon src={BsArrowRight} /> -->
             <Icon src={FaSolidArrowRightLong} size="48" />
         </div>
 
@@ -129,6 +116,7 @@
     /* insert any customizations to an element's tailwind css styling (that is too long for inline declaration) here */
 
     @reference './layout.css';
+    
     /* .parentPageContentDiv {
         background-color: #242424;
     } */
