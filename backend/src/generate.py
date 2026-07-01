@@ -28,8 +28,8 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_words, output_word_co
         inner_dict = corpora_chain_map[('<START>', 'The')]
         output_text_list.extend(['<START>', 'The'])
 
-    print(f'starter words found: {input_starter_tuple in corpora_chain_map}')
-    print(f"'<START> The' found: {('<START>', 'The') in corpora_chain_map}")
+    # print(f'starter words found: {input_starter_tuple in corpora_chain_map}')
+    # print(f"'<START> The' found: {('<START>', 'The') in corpora_chain_map}")
     while len(output_text_list) - punc_counter < output_word_count:
 
         # if next word inner dictionary is not empty, come up with next word in output text via randomizer weighted by which options follow most frequently

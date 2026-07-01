@@ -39,7 +39,7 @@ class RetrieveCorporaFromPMCAPI():
                 self.search_query_article_ids = json_data['esearchresult']['idlist']
             else:
                 self.search_query_article_ids = []
-                print('failed to retrieve article id data')
+                # print('failed to retrieve article id data')
         except requests.exceptions.RequestException as err:
             self.search_query_article_ids = []
             return f'HTTP error occurred: {err}'
