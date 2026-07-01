@@ -31,12 +31,12 @@ def api_generate():
         input_text_length = int(request.json['word_count'])
 
         input_topic, input_catalyst = specialization_topic_catalyst_map[specialization]
+
+        generated_text_output = main(input_topic, input_catalyst, input_text_length)
     except ValueError:
         return jsonify({'error': 'invalid number format for word_count'}), 400
     except KeyError:
         return jsonify({'error': 'invalid specialization!'}), 400
-
-    generated_text_output = main(input_topic, input_catalyst, input_text_length)
 
     return jsonify({'generated_text': generated_text_output})
 
