@@ -37,6 +37,11 @@ def markov_chain_text_gen(corpora_chain_map, input_starter_words, output_word_co
             key_list = list(inner_dict.keys())
             value_list = list(inner_dict.values())
             next_word = str(random.choices(key_list, value_list, k=1)[0])
+        else:
+            inner_dict =  corpora_chain_map[random.choice(list(corpora_chain_map.keys()))]
+            key_list = list(inner_dict.keys())
+            value_list = list(inner_dict.values())
+            next_word = str(random.choices(key_list, value_list, k=1)[0])
         
         # add word to output text list
         output_text_list.append(str(next_word))
