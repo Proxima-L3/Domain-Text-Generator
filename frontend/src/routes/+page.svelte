@@ -30,22 +30,29 @@
     }
 
     async function handleFormSubmit (event: SubmitEvent) : Promise<void> {
-        event.preventDefault();
-        formSubmittedBool = true;
 
-        const response = await fetch('http://localhost:5000/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                topic: userInputTopic,
-                catalyst: userInputCatalyst,
-                textLength: userInputTextLength
-            })
-        });
-
-        const data = await response.json();
-        generatedOutputText = data.generated_text;
-        formSubmittedBool = false;
+        try {
+            event.preventDefault();
+            formSubmittedBool = true;
+    
+            const response = await fetch('http://localhost:5000/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    topic: userInputTopic,
+                    catalyst: userInputCatalyst,
+                    textLength: userInputTextLength
+                })
+            });
+    
+            const data = await response.json();
+            generatedOutputText = data.generated_text;
+            formSubmittedBool = false;
+        }
+        catch (error) {
+            formSubmittedBool = false;
+            generatedOutputText = 'Failed to generate text. Please try again.';
+        }
     }
 
 </script>
@@ -116,7 +123,7 @@
     /* insert any customizations to an element's tailwind css styling (that is too long for inline declaration) here */
 
     @reference './layout.css';
-    
+
     /* .parentPageContentDiv {
         background-color: #242424;
     } */
