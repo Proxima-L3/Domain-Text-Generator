@@ -1,10 +1,14 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from main import main
 
 
+load_dotenv()
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5174', 'https://proxima-l3.github.io'])
+app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+CORS(app, origins=os.environ.get('CORS_ORIGINS').split(','))
 
 @app.route('/generate', methods=['POST'])
 def index():
@@ -42,4 +46,4 @@ def api_generate():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=os.environ.get('FLASK_DEBUG', 'false') == 'true')

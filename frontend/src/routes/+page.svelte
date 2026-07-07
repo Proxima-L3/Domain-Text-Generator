@@ -35,7 +35,7 @@
             event.preventDefault();
             formSubmittedBool = true;
     
-            const response = await fetch('http://localhost:5000/generate', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/generate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

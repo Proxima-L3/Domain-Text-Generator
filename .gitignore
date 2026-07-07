@@ -9,3 +9,4 @@ frontend/build/
 sample_gen_text_output.txt
 sample2_gen_text_output.txt
 sample3_gen_text_output.txt
+backend/.env
