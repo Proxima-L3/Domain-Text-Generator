@@ -8,18 +8,17 @@ Functions:
 
 import re
 from unidecode import unidecode
-from corpora_retrieval.pmc_api import RetrieveCorporaFromPMCAPI
 
 
 # the cleaning up of the text functions/classes will come later for now)
-def process_api_retrieved_corpora_to_string(user_input_topic: str, article_count: int):
+def process_api_retrieved_corpora_to_string(corpora_api_class: object, user_input_topic: str, article_count: int):
     """Processes retrieved corpora from a corpora api class instance's corpora_dict.
 
     The purpose of this function is to make a corpora api class instance of desired api class constructor type then process the retrieved corpora from the instance's corpora_dict into a single string to later be passed into the create_markov_chain_map function as an argument.
     """
 
     # corpora with specified word or phrase is collected with instance of pmc_api.py's main retrieval class constructor and its methods
-    corpora_retrieval_object = RetrieveCorporaFromPMCAPI(user_input_topic, article_count)
+    corpora_retrieval_object = corpora_api_class(user_input_topic, article_count)
     corpora_retrieval_object.get_search_query_article_ids_list()
     corpora_retrieval_object.get_corpora_text()
 
