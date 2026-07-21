@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from corpora_retrieval import gutendex_api, pmc_api
+from corpora_retrieval import gutendex_api, pmc_api, mediawiki_api
 from main import main
 
 
@@ -32,16 +32,39 @@ def index():
 @app.route('/api/generate', methods=['POST'])
 def api_generate():
     
-    specialization_topic_catalyst_map = {'generic': [gutendex_api.RetrieveCorporaFromGutendexAPI, '', ''], 'medical - experimental autogen text': [pmc_api.RetrieveCorporaFromPMCAPI, 'cryonics', 'Cryogenic preservation']}
+    # data entry, event management, executive assistance, financial analysis, rf cable design technician, vet tech,  needs better corpora
+    specialization_topic_catalyst_map = {'generic': [gutendex_api.RetrieveCorporaFromGutendexAPI, 100, '', ''], 
+                                         'accounting': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Accounting'], ''], 
+                                         'architecture': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Architecture', 'Architectural_design'], ''], 
+                                         'auto mechanics': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Automobile_maintenance', 'Auto_mechanics'], ''], 
+                                         'business law': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Business_law'], ''], 
+                                         'carpentry': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Carpentry', 'Woodworking', 'Wood-related terminology'], ''], 
+                                         'computer science': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Computer_science'], ''], 
+                                         'data entry': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Data_management'], ''], 
+                                         'ems': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Emergency_medical_services', 'First_aid'], ''], 
+                                         'event planning': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Event_management'], ''], 
+                                         'executive assistance': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Office_administration'], ''], 
+                                         'financial analysis': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Corporate_finance', 'Financial_data_analysis', 'Financial_analysts'], ''], 
+                                         'graphic design': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Graphic_design'], ''], 
+                                         'marketing': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Marketing', 'Promotional_and_marketing_communications'], ''], 
+                                         'medical transcription': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Medical_terminology'], ''], 
+                                         'phlebotomy': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Phlebotomy', 'Blood_tests'], ''], 
+                                         'psychology': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Psychology'], ''], 
+                                         'rf cable design technician': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Radio_spectrum', 'Radio_technology', 'Cables', 'Signal_cables'], ''], 
+                                         'social work': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Social_work'], ''], 
+                                         'vet tech': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Veterinary_medicine', 'Paraveterinary_workers'], ''], 
+                                         'web design': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Web_design'], '']
+                                        #  'medical - experimental autogen text': [pmc_api.RetrieveCorporaFromPMCAPI, 100, 'cryonics', 'Cryogenic preservation']
+                                         }
 
     try:
         specialization = request.json['specialization']
 
         input_text_length = int(request.json['word_count'])
 
-        corpora_api_class, input_topic, input_catalyst = specialization_topic_catalyst_map[specialization]
+        corpora_api_class, article_count, input_topic, input_catalyst = specialization_topic_catalyst_map[specialization]
 
-        generated_text_output = main(corpora_api_class ,input_topic, input_catalyst, input_text_length)
+        generated_text_output = main(corpora_api_class , article_count,input_topic, input_catalyst, input_text_length)
     except ValueError:
         return jsonify({'error': 'invalid number format for word_count'}), 400
     except KeyError:
