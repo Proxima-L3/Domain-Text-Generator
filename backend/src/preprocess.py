@@ -11,7 +11,7 @@ from unidecode import unidecode
 
 
 # the cleaning up of the text functions/classes will come later for now)
-def process_api_retrieved_corpora_to_string(corpora_api_class: object, user_input_topic: str, article_count: int):
+def process_api_retrieved_corpora_to_string(corpora_api_class: object, user_input_topic: str | list, article_count: int):
     """Processes retrieved corpora from a corpora api class instance's corpora_dict.
 
     The purpose of this function is to make a corpora api class instance of desired api class constructor type then process the retrieved corpora from the instance's corpora_dict into a single string to later be passed into the create_markov_chain_map function as an argument.
