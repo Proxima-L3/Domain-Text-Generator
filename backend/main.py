@@ -7,20 +7,17 @@ Functions:
     main_cli: The program's secondary cli based entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
 """
 
-from corpora_retrieval import gutendex_api, pmc_api
+from corpora_retrieval import gutendex_api, pmc_api, mediawiki_api
 from src.preprocess import process_api_retrieved_corpora_to_string, clean_up_corpora_string
 from src.train import create_markov_chain_map
 from src.generate import markov_chain_text_gen
 
 
-def main(corpora_api_class, user_input_topic, user_input_catalyst, user_input_text_length) -> str:
+def main(corpora_api_class, article_count, user_input_topic, user_input_catalyst, user_input_text_length) -> str:
     """Accepts frontend user input to output unique text using various modules.
     
     For now — the function is the main function that accepts user input required for all the various modules used in project as parameters. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
     """
-
-    # number of articles to pull for corpora
-    article_count = 10
 
     # call corpora processor and pass input topic and article count as arguments
     corpora_set_string = process_api_retrieved_corpora_to_string(corpora_api_class,user_input_topic, article_count)
@@ -46,11 +43,16 @@ def main_cli() -> None:
     # temp code that: requests user enter a word and a word limit to kickstart the markov chain
     corpora_class_map = {
         'gutendex': gutendex_api.RetrieveCorporaFromGutendexAPI,
+        'mediawiki': mediawiki_api.RetrieveCorporaFromMediaWikiAPI,
         'pmc': pmc_api.RetrieveCorporaFromPMCAPI
     }
-    corpora_api_class = corpora_class_map[input('Which corpora api class would you like to use to generate text (gutendex, pmc): ')]
+    corpora_api_class = corpora_class_map[input('Enter corpora api class you would like to use to generate text (gutendex, mediawiki, pmc): ')]
+    corpora_count = int(input('Enter number of articles/corpora you would like the markov chain text generator to be trained on: '))
 
-    user_input_topic = input('Enter a word or phrase that the generated text should be about: ')
+    if corpora_api_class == corpora_class_map['mediawiki']:
+        user_input_topic = input('Enter a word or multiple words separated by spaces that the generated text should be about: ').split()
+    else:
+        user_input_topic = input('Enter a word or phrase that the generated text should be about: ')
     user_input_catalyst = input('Enter two words to catalyze text generation: ')
     user_input_text_length = int(input('Enter the number of words you would like in your generated text: '))
 
@@ -59,7 +61,7 @@ def main_cli() -> None:
         # f.write(generated_text_output)
         
     # call main function to follow DRY
-    return print(main(corpora_api_class, user_input_topic, user_input_catalyst, user_input_text_length))
+    return print(main(corpora_api_class, corpora_count, user_input_topic, user_input_catalyst, user_input_text_length))
 
 
 
