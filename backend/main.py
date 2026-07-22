@@ -19,21 +19,12 @@ def main(corpora_api_class, article_count, user_input_topic, user_input_catalyst
     For now — the function is the main function that accepts user input required for all the various modules used in project as parameters. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
     """
 
-    # call corpora processor and pass input topic and article count as arguments
-    corpora_set_string = process_api_retrieved_corpora_to_string(corpora_api_class,user_input_topic, article_count)
-
-    # cleans up corpora string, adds punctuation tokenization, and adds sentence start tag indicators to help markov chain determine when sentences should begin
-    clean_corpora_string = clean_up_corpora_string(corpora_set_string)
-
-    # user input is passed in to corpora chain map creator function
-    corpora_markov_chain_map = create_markov_chain_map(clean_corpora_string)
-
     # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
     generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
 
     return generated_text_output
 
-def main_cli() -> None:
+def main_cli_test() -> None:
     """Requests relevant user input to output unique text using various modules.
     Create instance of .... and call its run()? method.
     
@@ -56,15 +47,27 @@ def main_cli() -> None:
     user_input_catalyst = input('Enter two words to catalyze text generation: ')
     user_input_text_length = int(input('Enter the number of words you would like in your generated text: '))
 
+    # call corpora processor and pass input topic and article count as arguments
+    corpora_set_string = process_api_retrieved_corpora_to_string(corpora_api_class,user_input_topic, corpora_count)
+
+    # cleans up corpora string, adds punctuation tokenization, and adds sentence start tag indicators to help markov chain determine when sentences should begin
+    clean_corpora_string = clean_up_corpora_string(corpora_set_string)
+
+    # user input is passed in to corpora chain map creator function
+    corpora_markov_chain_map = create_markov_chain_map(clean_corpora_string)
+
+    # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
+    generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
+
     # temp save to a text file line below
     # with open('sample3_gen_text_output.txt', mode='w', encoding='utf-8') as f:
         # f.write(generated_text_output)
         
     # call main function to follow DRY
-    return print(main(corpora_api_class, corpora_count, user_input_topic, user_input_catalyst, user_input_text_length))
+    return print(generated_text_output)
 
 
 
 
 if __name__ == '__main__':
-    main_cli()
+    main_cli_test()
