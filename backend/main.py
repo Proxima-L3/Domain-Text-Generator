@@ -7,22 +7,29 @@ Functions:
     main_cli: The program's secondary cli based entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
 """
 
+from constants import db
+from build_models import load_model_from_db
 from corpora_retrieval import gutendex_api, pmc_api, mediawiki_api
 from src.preprocess import process_api_retrieved_corpora_to_string, clean_up_corpora_string
 from src.train import create_markov_chain_map
 from src.generate import markov_chain_text_gen
 
 
-def main(corpora_api_class, article_count, user_input_topic, user_input_catalyst, user_input_text_length) -> str:
+def main(specialization, user_input_catalyst, user_input_text_length) -> str:
     """Accepts frontend user input to output unique text using various modules.
     
     For now — the function is the main function that accepts user input required for all the various modules used in project as parameters. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
     """
 
-    # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
-    generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
-
-    return generated_text_output
+    # conditional that checks if a model is in db yet by _id = specialization
+    if specialization in db:
+        # load model from database into a local variable
+        corpora_markov_chain_map = load_model_from_db(specialization)
+        # user input and created corpora markov chain map is passed in to markov chain text generator algorithm
+        generated_text_output = markov_chain_text_gen(corpora_markov_chain_map, user_input_catalyst, user_input_text_length)
+        return generated_text_output
+    else:
+        return 'Text generator model not found in database for this specialization'
 
 def main_cli_test() -> None:
     """Requests relevant user input to output unique text using various modules.
