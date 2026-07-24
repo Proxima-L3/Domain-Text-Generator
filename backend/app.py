@@ -47,6 +47,8 @@ def api_generate():
         input_catalyst = specialization_topic_catalyst_map[specialization][3]
 
         generated_text_output = main(specialization, input_catalyst, input_text_length)
+        if generated_text_output == 'Text generator model not found in database for this specialization':
+            return jsonify({'error': generated_text_output}), 404
     except ValueError:
         return jsonify({'error': 'invalid number format for word_count'}), 400
     except KeyError:
