@@ -1,17 +1,26 @@
 import couchdb
+import os
+from dotenv import load_dotenv
 from corpora_retrieval import gutendex_api, pmc_api, mediawiki_api
 
 
+# load your admin username and password from env vars to be used when making calls to server
+load_dotenv()
+
+couchdb_user = os.environ.get('COUCHDB_USER')
+couchdb_password = os.environ.get('COUCHDB_PASSWORD')
+
 # define server_url and db name on server
-server_url = couchdb.Server('http://localhost:5984/')
+server_url = couchdb.Server(f'http://{couchdb_user}:{couchdb_password}@localhost:5984/')
 db = server_url['markov_chain_models']
 
 # data entry, event management, executive assistance, financial analysis, rf cable design technician, vet tech,  needs better corpora
 specialization_map = {
-    'generic': [gutendex_api.RetrieveCorporaFromGutendexAPI, 100, '', ''], 
+    'generic': [gutendex_api.RetrieveCorporaFromGutendexAPI, 2, '', ''], 
     'accounting': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Accounting'], ''], 
     'architecture': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Architecture', 'Architectural_design'], ''], 
-    'auto mechanics': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Automobile_maintenance', 'Auto_mechanics'], ''], 
+    'auto mechanics': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Motor_vehicle_maintenance',
+  'Automotive_technologies', 'Mechanics_(trade)'], ''], 
     'business law': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Business_law'], ''], 
     'carpentry': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Carpentry', 'Woodworking', 'Wood-related terminology'], ''], 
     'computer science': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Computer_science'], ''], 
@@ -21,14 +30,14 @@ specialization_map = {
     'executive assistance': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Office_administration'], ''], 
     'financial analysis': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Corporate_finance', 'Financial_data_analysis', 'Financial_analysts'], ''], 
     'graphic design': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Graphic_design'], ''], 
-    'marketing': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Marketing', 'Promotional_and_marketing_communications'], ''], 
+    'marketing': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Marketing', 'Promotion_and_marketing_communications'], ''], 
     'medical transcription': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Medical_terminology'], ''], 
     'phlebotomy': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Phlebotomy', 'Blood_tests'], ''], 
     'psychology': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Psychology'], ''], 
     'rf cable design technician': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Radio_spectrum', 'Radio_technology', 'Cables', 'Signal_cables'], ''], 
     'social work': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Social_work'], ''], 
     'vet tech': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Veterinary_medicine', 'Paraveterinary_workers'], ''], 
-    'web design': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Web_design'], '']
-#  'medical - experimental autogen text': [pmc_api.RetrieveCorporaFromPMCAPI, 100, 'cryonics', 'Cryogenic preservation']
+    'web design': [mediawiki_api.RetrieveCorporaFromMediaWikiAPI, 500, ['Web_design'], ''],
+    'medical - experimental autogen text': [pmc_api.RetrieveCorporaFromPMCAPI, 100, 'cryonics', 'Cryogenic preservation']
     }
 
