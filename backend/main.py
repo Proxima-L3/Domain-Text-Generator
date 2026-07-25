@@ -1,10 +1,10 @@
-"""Run Domain Specific Text Generator from program entry point.
+"""Contains two functions that run Domain Specific Text Generator using loaded couchdb models and the full pipeline for the main_cli_test version of the main function.
 
-This module holds the main function which acts as the program's entry point. It imports the relevant modules needed for the main function.
+This module holds the main function which functions as a critical part of the full pipeline, loading saved markov chain models from couchdb and returning generated text. It also holds a cli test main function that can be run as a script from the cli to test the full pipeline. It imports the relevant modules needed for both functions.
 
 Functions:
-    main: The program's primary entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then returns the desired output.
-    main_cli: The program's secondary cli based entry point function which (for now) requests user input which are passed into functions pieced together from modules of the project's src package: preprocess, train, and generate. It then (for now) returns a print statement with the desired output in the terminal (for development purposes).
+    main: The program's critical entry point function which takes in arguments needed to catalyze the text generation process and determine how many words should be output as well as an argument to look up if a markov chain model is in the couchdb database. If it is, it uses src.generate's markov_chain_text_gen function to return the desired generated text. If the model does not exist in the database, it returns a string telling the user "Text generator model not found in database for this specialization".
+    main_cli: The program's secondary cli based entry point function which requests user input which is passed into functions pieced together from modules of the project's corpora retrieval package and its src package: preprocess, train, and generate. It then returns a print statement with the desired output in the terminal (for admin/development purposes).
 """
 
 from constants import db
@@ -16,9 +16,9 @@ from src.generate import markov_chain_text_gen
 
 
 def main(specialization, user_input_catalyst, user_input_text_length) -> str:
-    """Accepts frontend user input to output unique text using various modules.
+    """Accepts frontend user input to output unique text using a couple modules.
     
-    For now — the function is the main function that accepts user input required for all the various modules used in project as parameters. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
+    This function is the main function that accepts a specialization, an input catalyst, and desired text length as parameters. It checks if the specialization's markov chain model is in the couchdb database and if so, loads it from db. It then uses the loaded model, the input catalyst, and desired text length when calling the generate text function from generate.py. If the specialization model is in the database the generated output text is returned and if not, a message telling the user that the model for the chosen specialization is not present in the database is returned.
     """
 
     # conditional that checks if a model is in db yet by _id = specialization
@@ -33,9 +33,8 @@ def main(specialization, user_input_catalyst, user_input_text_length) -> str:
 
 def main_cli_test() -> None:
     """Requests relevant user input to output unique text using various modules.
-    Create instance of .... and call its run()? method.
     
-    For now — the function is the main function that requests user input required for all the various modules used in project. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is then passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
+    This function is a version of the main function but for testing the full pipeline from the cli without having to load or save models to couchdb. It can be run as a script/cli tool and it's main purpose is for admin/dev testing. It requests user input required for all the various modules used in project. It pieces together all the modules that retrieve corpora from an api endpoint using a class constructor, processes that text in a function, what is returned is then passed into another function that creates a markov chain based corpora map, and then that map is passed into the markov chain text generator function itself, which returns unique text of a specified topic and word count.
     """
 
     # temp code that: requests user enter a word and a word limit to kickstart the markov chain
