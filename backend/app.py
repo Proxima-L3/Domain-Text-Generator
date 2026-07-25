@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from corpora_retrieval import gutendex_api, pmc_api, mediawiki_api
-from constants import specialization_map
+from constants import specialization_map, db
 from main import main
 
 
@@ -30,6 +30,8 @@ def index():
     This index function/route is used by the svelte frontend of the Domain Text Generator site to save the user's choices on corpora api to use, topic/specialization they wish the text output to be about, an input catalyst that defines what words the text should begin with, and the user's desired output text length in words. Those saved https post params are then used when calling the main function to generate the desired text. If no errors occur, the generated text is returned back to the frontend to be displayed in the generated text output box.
     """
 
+    if db is None:
+        return jsonify({'error': 'database unavailable'}), 503
     try:
         user_input_corpora = request.json['corpora']
         user_input_topic = request.json['topic']
@@ -52,9 +54,12 @@ def api_generate():
     This api_generate function/route is used by the typing site as an api endpoint to request desired generated text. It first uses the specialization map import to get the predefined input catalyst from a constants dictionary map, then defines what the specialization and desired word count of output text should be using the http's post request params. Then it uses the main function from main.py to load markov chain model defined by specialization name and generate desired output text. If the model is not found it returns an error back to the typing site (which notifies the user then navigates back a page). And if the model is found, then the desired generated text is returned back in a jsonified form.
     """
 
-    specialization_topic_catalyst_map = specialization_map
+    if db is None:
+        return jsonify({'error': 'database unavailable'}), 503
 
     try:
+        specialization_topic_catalyst_map = specialization_map
+
         specialization = request.json['specialization']
 
         input_text_length = int(request.json['word_count'])

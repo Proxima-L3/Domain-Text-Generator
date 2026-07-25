@@ -16,9 +16,13 @@ load_dotenv()
 couchdb_user = os.environ.get('COUCHDB_USER')
 couchdb_password = os.environ.get('COUCHDB_PASSWORD')
 
-# define server_url and db name on server
-server_url = couchdb.Server(f'http://{couchdb_user}:{couchdb_password}@localhost:5984/')
-db = server_url['markov_chain_models']
+try:
+    # define server_url and db name on server
+    server_url = couchdb.Server(f'http://{couchdb_user}:{couchdb_password}@localhost:5984/')
+    db = server_url['markov_chain_models']
+except Exception as exception_error:
+    db = None
+    print(f'Error: {exception_error}.\ndb var set to None type.')
 
 # data entry, event management, executive assistance, financial analysis, rf cable design technician, vet tech,  needs better corpora
 specialization_map = {

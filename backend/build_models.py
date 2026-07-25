@@ -72,16 +72,20 @@ if __name__ == '__main__':
     parser.add_argument('--field', type=str)
     args = parser.parse_args()
 
-    if args.all:
-        for field, values in specialization_map.items():
+    if db is None:
+        print('couchDB is not available. Please make sure couchDB is running.')
+        exit(1)
+    else:
+        if args.all:
+            for field, values in specialization_map.items():
+                corpora_api_class, corpora_count, topic = values[0:3]
+                save_model_to_db(field, corpora_api_class, topic, corpora_count)
+
+                print(f'Successfully saved model for {field} to database')
+
+        elif args.field:
+            values = specialization_map[args.field]
             corpora_api_class, corpora_count, topic = values[0:3]
-            save_model_to_db(field, corpora_api_class, topic, corpora_count)
+            save_model_to_db(args.field, corpora_api_class, topic, corpora_count)
 
-            print(f'Successfully saved model for {field} to database')
-
-    elif args.field:
-        values = specialization_map[args.field]
-        corpora_api_class, corpora_count, topic = values[0:3]
-        save_model_to_db(args.field, corpora_api_class, topic, corpora_count)
-
-        print(f'Successfully saved model for {args.field} to database')
+            print(f'Successfully saved model for {args.field} to database')
