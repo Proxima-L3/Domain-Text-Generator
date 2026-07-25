@@ -12,6 +12,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from build_models import load_model_from_db, save_model_to_db
 from corpora_retrieval import gutendex_api, pmc_api, mediawiki_api
 from constants import specialization_map, db
 from main import main
@@ -32,19 +33,38 @@ def index():
 
     if db is None:
         return jsonify({'error': 'database unavailable'}), 503
-    try:
-        user_input_corpora = request.json['corpora']
-        user_input_topic = request.json['topic']
-        user_input_catalyst = request.json['catalyst']
-        user_input_text_length = int(request.json['textLength'])
+    else:
+        try:
+            corpora_class_map = {
+                'gutendex': gutendex_api.RetrieveCorporaFromGutendexAPI,
+                # 'mediawiki': mediawiki_api.RetrieveCorporaFromMediaWikiAPI,
+                'pmc': pmc_api.RetrieveCorporaFromPMCAPI
+            }
 
-        generated_text_output = main(user_input_corpora, user_input_topic, user_input_catalyst, user_input_text_length)
-    except ValueError:
-        return jsonify({'error': 'invalid number format for text length!'}), 400
-    except KeyError:
-        return jsonify({'error': 'invalid topic and/or catalyst!'}), 400
+            user_input_corpora = request.json['corpora']
+            user_input_topic = request.json['topic'].lower()
+            user_input_catalyst = request.json['catalyst']
+            user_input_text_length = int(request.json['textLength'])
 
-    return jsonify({'generated_text': generated_text_output})
+            database_specialization_name = f'{user_input_topic} - (for DTG site using {user_input_corpora} api)'
+
+            if database_specialization_name in db:
+                generated_text_output = main(database_specialization_name, user_input_catalyst, user_input_text_length)
+            elif user_input_topic in db:
+                generated_text_output = main(user_input_topic, user_input_catalyst, user_input_text_length)
+            else:
+                corpora_api_class = corpora_class_map[user_input_corpora]
+                corpora_count = 100
+
+                save_model_to_db(database_specialization_name, corpora_api_class, user_input_topic, corpora_count)
+
+                generated_text_output = main(database_specialization_name, user_input_catalyst, user_input_text_length)
+        except ValueError:
+            return jsonify({'error': 'invalid number format for text length!'}), 400
+        except KeyError:
+            return jsonify({'error': 'invalid topic and/or catalyst!'}), 400
+
+        return jsonify({'generated_text': generated_text_output})
 
 
 @app.route('/api/generate', methods=['POST'])
