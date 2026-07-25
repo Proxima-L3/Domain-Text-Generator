@@ -1,3 +1,9 @@
+"""Contains all constants needed in other modules, all grouped in this module for easy future global variable reassignment.
+
+This module is responsible for holding all the various constant variables used throughout the project. It imports required libraries, packages, and local modules needed for each line. It also holds the lines of code that initialize/define the couchdb server's url, admins, and admin passwords for now.
+"""
+
+
 import couchdb
 import os
 from dotenv import load_dotenv
