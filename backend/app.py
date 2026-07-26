@@ -46,7 +46,10 @@ def index():
             user_input_catalyst = request.json['catalyst']
             user_input_text_length = int(request.json['textLength'])
 
-            database_specialization_name = f'{user_input_topic} - (for DTG site using {user_input_corpora} api)'
+            if user_input_corpora == 'gutendex':
+                database_specialization_name = 'generic'
+            else:
+                database_specialization_name = f'{user_input_topic} - (for DTG site using {user_input_corpora} api)'
 
             if database_specialization_name in db:
                 generated_text_output = main(database_specialization_name, user_input_catalyst, user_input_text_length)

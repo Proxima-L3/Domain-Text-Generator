@@ -9,6 +9,7 @@
 
 
     // let vars in ts: user_input_topic/specialization field, user_input_catalyst, & user_input_text_length ...to be used as svelte state vars for conditional html elements
+    let userInputCorpora: string = $state('gutendex')
     let userInputTopic: string = $state('');
     let userInputCatalyst: string = $state('');
     let userInputTextLength: number | undefined = $state(undefined);
@@ -17,7 +18,9 @@
     let generatedOutputText: string = $state('');
 
     // useful helper states to keep the html clean
-    let isInputCatalystDisabled: boolean = $derived(userInputTopic.trim() === '');
+    let isInputCorporaGutendex: boolean = $derived(userInputCorpora === 'gutendex');
+    let isInputTopicHidden: boolean = $derived(isInputCorporaGutendex)
+    let isInputCatalystDisabled: boolean = $derived(isInputCorporaGutendex ? false : userInputTopic.trim() === '');
     let isInputTextLengthDisabled: boolean = $derived(isInputCatalystDisabled || userInputCatalyst.trim() === '');
 
     let textGenerationIsLoading: boolean = $derived(formSubmittedBool);
@@ -39,6 +42,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    corpora: userInputCorpora,
                     topic: userInputTopic,
                     catalyst: userInputCatalyst,
                     textLength: userInputTextLength
@@ -67,9 +71,19 @@
         <form class="flex flex-col items-end gap-y-6" id="userInputForm" action="" onsubmit={handleFormSubmit}>
 
             <div class="flex items-center gap-x-2">
-                <label class="text-neutral-300" for="userInputTopicInputTag">Enter a word or phrase that the generated text should be about: </label>
-                <input class="bg-neutral-600 border-2 border-cyan-500 rounded px-3 py-2 text-white placeholder-neutral-300 disabled:opacity-50" id="userInputTopicInputTag" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" required />
+                <label class="text-neutral-300" for="userInputCorporaSelectTag">Choose a corpora (text source) that the text generator will be trained on: </label>
+                <select class="bg-neutral-600 border-2 border-cyan-500 rounded px-3 py-2 text-white placeholder-neutral-300" name="" id="userInputCorporaSelectTag" bind:value={userInputCorpora} placeholder="[choose corpora source]" required >
+                    <option value="gutendex">Gutendex (generic text)</option>
+                    <option value="pmc">Pub Med Central (scientific journals)</option>
+                </select>
             </div>
+
+            {#if !isInputTopicHidden}
+                <div class="flex items-center gap-x-2">
+                    <label class="text-neutral-300" for="userInputTopicInputTag">Enter a word or phrase that the generated text should be about: </label>
+                    <input class="bg-neutral-600 border-2 border-cyan-500 rounded px-3 py-2 text-white placeholder-neutral-300 disabled:opacity-50" id="userInputTopicInputTag" name="userInputTopic" type="text" bind:value={userInputTopic} placeholder="(e.g. cryonics)" required />
+                </div>
+            {/if}
 
             <div class="flex items-center gap-x-2">
                 <label class="text-neutral-300" for="userInputCatalystInputTag">Enter two words to catalyze text generation: </label>
