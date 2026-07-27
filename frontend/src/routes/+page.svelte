@@ -50,7 +50,12 @@
             });
     
             const data = await response.json();
-            generatedOutputText = data.generated_text;
+            if (response.ok) {
+                generatedOutputText = data.generated_text;
+            }
+            else {
+                generatedOutputText = data.error || 'An unknown error occurred.';
+            }
             formSubmittedBool = false;
         }
         catch (error) {
